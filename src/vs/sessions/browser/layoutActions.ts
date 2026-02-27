@@ -89,7 +89,7 @@ class ToggleSecondarySidebarVisibilityAction extends Action2 {
 	constructor() {
 		super({
 			id: ToggleSecondarySidebarVisibilityAction.ID,
-			title: localize2('toggleSecondarySidebar', 'Toggle Secondary Side Bar Visibility'),
+			title: localize2('toggleSecondarySidebar', 'Toggle Folder Visibility'),
 			icon: panelRightOffIcon,
 			toggled: {
 				condition: AuxiliaryBarVisibleContext,

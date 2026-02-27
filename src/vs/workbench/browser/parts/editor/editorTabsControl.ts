@@ -6,7 +6,7 @@
 import './media/editortabscontrol.css';
 import { localize } from '../../../../nls.js';
 import { DataTransfers } from '../../../../base/browser/dnd.js';
-import { $, Dimension, getActiveWindow, getWindow, isMouseEvent } from '../../../../base/browser/dom.js';
+import { $, addDisposableListener, Dimension, EventType, getActiveWindow, getWindow, isMouseEvent } from '../../../../base/browser/dom.js';
 import { StandardMouseEvent } from '../../../../base/browser/mouseEvent.js';
 import { ActionsOrientation, IActionViewItem, prepareActions } from '../../../../base/browser/ui/actionbar/actionbar.js';
 import { IAction, ActionRunner } from '../../../../base/common/actions.js';
@@ -47,6 +47,9 @@ import { IBaseActionViewItemOptions } from '../../../../base/browser/ui/actionba
 import { MarkdownString } from '../../../../base/common/htmlContent.js';
 import { IManagedHoverTooltipMarkdownString } from '../../../../base/browser/ui/hover/hover.js';
 import { applyDragImage } from '../../../../base/browser/ui/dnd/dnd.js';
+import { IEditorService } from '../../../services/editor/common/editorService.js';
+import { URI } from '../../../../base/common/uri.js';
+import { Schemas } from '../../../../base/common/network.js';
 
 export class EditorCommandsContextActionRunner extends ActionRunner {
 
@@ -137,6 +140,7 @@ export abstract class EditorTabsControl extends Themable implements IEditorTabsC
 		@IKeybindingService private readonly keybindingService: IKeybindingService,
 		@INotificationService private readonly notificationService: INotificationService,
 		@IQuickInputService protected quickInputService: IQuickInputService,
+		@IEditorService private readonly editorService: IEditorService,
 		@IThemeService themeService: IThemeService,
 		@IEditorResolverService private readonly editorResolverService: IEditorResolverService,
 		@IHostService private readonly hostService: IHostService,
@@ -170,6 +174,49 @@ export abstract class EditorTabsControl extends Themable implements IEditorTabsC
 	protected create(parent: HTMLElement): HTMLElement {
 		this.updateTabHeight();
 		return parent;
+	}
+
+	protected createNewEditorButton(): HTMLElement {
+		const button = $('.editor-tabs-new-button.codicon.codicon-add', {
+			role: 'button',
+			tabIndex: 0,
+			'aria-label': localize('newTabButtonAriaLabel', "New Tab"),
+			title: localize('newTabButtonTooltip', "New Tab"),
+		});
+
+		this._register(addDisposableListener(button, EventType.CLICK, async e => {
+			e.preventDefault();
+			e.stopPropagation();
+			await this.openNewEditor();
+		}));
+
+		this._register(addDisposableListener(button, EventType.KEY_DOWN, async e => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				e.stopPropagation();
+				await this.openNewEditor();
+			}
+		}));
+
+		return button;
+	}
+
+	private async openNewEditor(): Promise<void> {
+		try {
+			await this.editorService.openEditor({
+				resource: URI.from({
+					scheme: Schemas.untitled,
+					path: '/New Tab',
+					query: String(Date.now()),
+				}),
+				forceUntitled: true,
+				options: {
+					pinned: true,
+				},
+			});
+		} catch (error) {
+			this.notificationService.error(error);
+		}
 	}
 
 	private get editorActionsEnabled(): boolean {

@@ -9,6 +9,28 @@
 	cursor: pointer;
 }
 
+.monaco-workbench .part.editor > .content .editor-group-container > .title .editor-tabs-new-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 28px;
+	height: var(--editor-group-tab-height);
+	margin-left: 2px;
+	cursor: pointer;
+	opacity: 0.8;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .editor-tabs-new-button:hover {
+	opacity: 1;
+	background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .editor-tabs-new-button:focus-visible {
+	outline: 1px solid var(--vscode-focusBorder);
+	outline-offset: -1px;
+}
+
 .monaco-workbench .part.editor > .content .editor-group-container > .title .title-label,
 .monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab .tab-label {
 	white-space: nowrap !important;

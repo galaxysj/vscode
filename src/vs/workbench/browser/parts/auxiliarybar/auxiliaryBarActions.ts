@@ -30,7 +30,7 @@ const auxiliaryBarLeftOffIcon = registerIcon('auxiliarybar-left-off-layout-icon'
 export class ToggleAuxiliaryBarAction extends Action2 {
 
 	static readonly ID = 'workbench.action.toggleAuxiliaryBar';
-	static readonly LABEL = localize2('toggleAuxiliaryBar', "Toggle Secondary Side Bar Visibility");
+	static readonly LABEL = localize2('toggleAuxiliaryBar', "Toggle Folders Visibility");
 
 	constructor() {
 		super({
@@ -145,7 +145,7 @@ MenuRegistry.appendMenuItems([
 			group: '2_pane_toggles',
 			command: {
 				id: ToggleAuxiliaryBarAction.ID,
-				title: localize('toggleSecondarySideBar', "Toggle Secondary Side Bar"),
+				title: localize('toggleSecondarySideBar', "Toggle Folders"),
 				toggled: { condition: AuxiliaryBarVisibleContext, icon: auxiliaryBarLeftIcon },
 				icon: auxiliaryBarLeftOffIcon,
 			},
@@ -164,7 +164,7 @@ MenuRegistry.appendMenuItems([
 			group: '2_pane_toggles',
 			command: {
 				id: ToggleAuxiliaryBarAction.ID,
-				title: localize('toggleSecondarySideBar', "Toggle Secondary Side Bar"),
+				title: localize('toggleSecondarySideBar', "Toggle Folders"),
 				toggled: { condition: AuxiliaryBarVisibleContext, icon: auxiliaryBarRightIcon },
 				icon: auxiliaryBarRightOffIcon,
 			},

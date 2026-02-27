@@ -34,7 +34,7 @@ import { INotificationService } from '../../../../platform/notification/common/n
 import { MergeGroupMode, IMergeGroupOptions } from '../../../services/editor/common/editorGroupsService.js';
 import { addDisposableListener, EventType, EventHelper, Dimension, scheduleAtNextAnimationFrame, findParentWithClass, clearNode, DragAndDropObserver, isMouseEvent, getWindow, $ } from '../../../../base/browser/dom.js';
 import { localize } from '../../../../nls.js';
-import { IEditorGroupsView, EditorServiceImpl, IEditorGroupView, IInternalEditorOpenOptions, IEditorPartsView, prepareMoveCopyEditors } from './editor.js';
+import { IEditorGroupsView, IEditorGroupView, IInternalEditorOpenOptions, IEditorPartsView, prepareMoveCopyEditors } from './editor.js';
 import { CloseEditorTabAction, UnpinEditorAction } from './editorActions.js';
 import { assertReturnsAllDefined, assertReturnsDefined } from '../../../../base/common/types.js';
 import { IEditorService } from '../../../services/editor/common/editorService.js';
@@ -113,6 +113,7 @@ export class MultiEditorTabsControl extends EditorTabsControl {
 
 	private readonly closeEditorAction = this._register(this.instantiationService.createInstance(CloseEditorTabAction, CloseEditorTabAction.ID, CloseEditorTabAction.LABEL));
 	private readonly unpinEditorAction = this._register(this.instantiationService.createInstance(UnpinEditorAction, UnpinEditorAction.ID, UnpinEditorAction.LABEL));
+	private readonly editorService: IEditorService;
 
 	private readonly tabResourceLabels = this._register(this.instantiationService.createInstance(ResourceLabels, DEFAULT_LABELS_CONTAINER));
 	private tabLabels: IEditorInputLabel[] = [];
@@ -146,14 +147,15 @@ export class MultiEditorTabsControl extends EditorTabsControl {
 		@IKeybindingService keybindingService: IKeybindingService,
 		@INotificationService notificationService: INotificationService,
 		@IQuickInputService quickInputService: IQuickInputService,
+		@IEditorService editorService: IEditorService,
 		@IThemeService themeService: IThemeService,
-		@IEditorService private readonly editorService: EditorServiceImpl,
 		@IPathService private readonly pathService: IPathService,
 		@ITreeViewsDnDService private readonly treeViewsDragAndDropService: ITreeViewsDnDService,
 		@IEditorResolverService editorResolverService: IEditorResolverService,
 		@IHostService hostService: IHostService,
 	) {
-		super(parent, editorPartsView, groupsView, groupView, tabsModel, contextMenuService, instantiationService, contextKeyService, keybindingService, notificationService, quickInputService, themeService, editorResolverService, hostService);
+		super(parent, editorPartsView, groupsView, groupView, tabsModel, contextMenuService, instantiationService, contextKeyService, keybindingService, notificationService, quickInputService, editorService, themeService, editorResolverService, hostService);
+		this.editorService = editorService;
 
 		// Resolve the correct path library for the OS we are on
 		// If we are connected to remote, this accounts for the
@@ -192,6 +194,9 @@ export class MultiEditorTabsControl extends EditorTabsControl {
 
 		// Create Editor Toolbar
 		this.createEditorActionsToolBar(this.tabsAndActionsContainer, ['editor-actions']);
+
+		// New editor button (shown in the tab row, before editor actions)
+		this.tabsAndActionsContainer.insertBefore(this.createNewEditorButton(), this.editorActionsToolbarContainer ?? null);
 
 		// Set tabs control visibility
 		this.updateTabsControlVisibility();
@@ -638,6 +643,7 @@ export class MultiEditorTabsControl extends EditorTabsControl {
 			this.clearEditorActionsToolbar();
 			this.updateTabsControlVisibility();
 		}
+
 	}
 
 	moveEditor(editor: EditorInput, fromTabIndex: number, targetTabIndex: number): void {

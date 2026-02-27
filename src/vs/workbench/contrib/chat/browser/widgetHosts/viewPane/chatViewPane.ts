@@ -160,7 +160,7 @@ export class ChatViewPane extends ViewPane implements IViewWelcomeDelegate {
 	private updateContextKeys(): void {
 		const { position, location } = this.getViewPositionAndLocation();
 
-		this.chatViewLocationContext.set(location ?? ViewContainerLocation.AuxiliaryBar);
+		this.chatViewLocationContext.set(location ?? ViewContainerLocation.Sidebar);
 		this.sessionsViewerOrientationContext.set(this.sessionsViewerOrientation);
 		this.sessionsViewerPositionContext.set(position === Position.RIGHT ? AgentSessionsViewerPosition.Right : AgentSessionsViewerPosition.Left);
 	}
@@ -185,7 +185,7 @@ export class ChatViewPane extends ViewPane implements IViewWelcomeDelegate {
 
 		return {
 			position: sideSessionsOnRightPosition ? Position.RIGHT : Position.LEFT,
-			location: viewLocation ?? ViewContainerLocation.AuxiliaryBar,
+			location: viewLocation ?? ViewContainerLocation.Sidebar,
 		};
 	}
 
